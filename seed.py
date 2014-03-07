@@ -25,6 +25,8 @@ def load_movies(session):
         session = model.Session()
         for row in reader:
             title =  row[1]
+            title = title.split(" (")
+            title = title[0]
             title = title.decode("latin-1")
             if row[2] == '':
                 dt = datetime.datetime.strptime("01-Jan-1970", "%d-%b-%Y")
@@ -39,12 +41,22 @@ def load_movies(session):
 
 def load_ratings(session):
     # use u.data
-    pass
+    with open("./seed_data/u.data", "rb") as f:
+        reader = csv.reader(f, delimiter="\t")
+        session = model.Session()
+        for row in reader:
+            # dt = datetime.datetime.utcfromtimestamp(float(row[3]))
+            add_rating = model.Rating(movie_id=row[1], user_id=row[0], rating=row[2])
+            session.add(add_rating)
+        session.commit()
+            
+    
 
 def main(session):
     # You'll call each of the load_* functions with the session as an argument
-    # load_users(model.Session)
+    load_users(model.Session)
     load_movies(model.Session)
+    load_ratings(model.Session)
     pass
 
 if __name__ == "__main__":
