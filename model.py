@@ -42,9 +42,35 @@ class Rating(Base):
     user = relationship("User", backref=backref("ratings", order_by=user_id))
     movie = relationship("Movie", backref=backref("ratings", order_by=movie_id))
 
-
-
 ### End class declarations
+def create_user(email, password, password_verify):
+    check_email = session.query(User).filter_by(email = email).first()
+    print check_email
+    if check_email != None:
+        return 1
+    elif hash(password) != hash(password_verify):
+        return 2
+    else:
+        add_user = User(email=email, password=password)
+        session.add(add_user)
+        session.commit()
+        return 3
+
+
+def authenticate(email, password):
+    check_email = session.query(User).filter_by(email = email).first()
+    print check_email
+    if check_email == None:
+        return None
+    password_input = hash(password)
+    real_password = session.query(User.password).filter_by(email=email).first()
+    real_password = hash(real_password[0])
+    if password_input == real_password:
+        print "That password checked out"
+        return email
+    else:
+        print "Not a good password nub"
+        return None
 # def connect():
 #     global ENGINE
 #     global Session

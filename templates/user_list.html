@@ -1,7 +1,15 @@
 <html>
+<head>
+    {% extends 'master.html' %}
+    <title>Secretly Judging You, Movie</title>
+</head>
 <body>
-{% for user in user_list %}
-<h2>User {{user.id}}, age{{user.age}}</h2>
+    {% block body %}
+<a href="/logout">Log out</a>
+<h1>User list</h1>
+{% for user in users %}
+<h3>User {{user.id}}, age {{user.age}}, has {{ user.ratings|length}} ratings</h3>
 {% endfor %}
+{% endblock %}
 </body>
 </html>
