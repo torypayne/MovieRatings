@@ -44,3 +44,19 @@ h2 {
 div#logout {
     float: right;
 }
+
+form.input[type="radio"] {
+    margin-right: 20px;
+}
+
+#form_ratings {
+    width: 145px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+form h3 {
+    width: 170px;
+    margin-left: auto;
+    margin-right: auto;
+}

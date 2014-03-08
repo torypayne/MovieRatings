@@ -6,12 +6,12 @@ from sqlalchemy.orm import sessionmaker, relationship, backref, scoped_session
 
 
 ENGINE = create_engine("sqlite:///ratings.db", echo=False)
-session = scoped_session(sessionmaker(bind=ENGINE, 
+s = scoped_session(sessionmaker(bind=ENGINE, 
                                     autocommit = False, 
                                     autoflush = False))
 
 Base = declarative_base()
-Base.query = session.query_property()
+Base.query = s.query_property()
 
 ### Class declarations go here
 class User(Base):
@@ -44,7 +44,7 @@ class Rating(Base):
 
 ### End class declarations
 def create_user(email, password, password_verify):
-    check_email = session.query(User).filter_by(email = email).first()
+    check_email = s.query(User).filter_by(email = email).first()
     print check_email
     if check_email != None:
         return 1
@@ -52,18 +52,18 @@ def create_user(email, password, password_verify):
         return 2
     else:
         add_user = User(email=email, password=password)
-        session.add(add_user)
-        session.commit()
+        s.add(add_user)
+        s.commit()
         return 3
 
 
 def authenticate(email, password):
-    check_email = session.query(User).filter_by(email = email).first()
+    check_email = s.query(User).filter_by(email = email).first()
     print check_email
     if check_email == None:
         return None
     password_input = hash(password)
-    real_password = session.query(User.password).filter_by(email=email).first()
+    real_password = s.query(User.password).filter_by(email=email).first()
     real_password = hash(real_password[0])
     if password_input == real_password:
         print "That password checked out"
@@ -71,11 +71,14 @@ def authenticate(email, password):
     else:
         print "Not a good password nub"
         return None
+
+
+
 # def connect():
 #     global ENGINE
-#     global Session
+#     global s
 
-#     return Session()
+#     return s()
 
 def main():
     """In case we need this for something"""

@@ -1,0 +1,41 @@
+<html>
+    <head>
+        {% extends 'master.html' %}
+
+    {% block body %}
+    <h1>{{movie.name}}</h1>
+
+        
+        <div class="container">
+            <form class="signin" method="post">
+                <h3>Seen it? Rate it</h3>
+                    <div id="form_ratings">
+                        <label for="1">1</label>
+                        <input type="radio" value="1" name="rating">
+                        <label for="2">2</label>
+                        <input type="radio" value="2" name="rating">
+                        <label for="3">3</label>
+                        <input type="radio" value="3" name="rating">
+                        <label for="4">4</label>
+                        <input type="radio" value="4" name="rating">
+                        <label for="5">5</label>
+                        <input type="radio" value="5" name="rating">
+                    </div>
+                <input type="submit" class="btn btn-primary btn-block" value="Submit">
+            </form>
+        </div>
+        <div>
+            {% for rating in movie.ratings %}
+                <p><strong><a href="/user/{{rating.user.id}}">User {{ rating.user.id}}</a></strong>
+                    <br>
+                Rating: {{ rating.rating}}
+                </p>
+               
+            {% endfor %}
+
+
+        </div>
+
+    {% endblock %}
+
+</html>

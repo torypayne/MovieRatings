@@ -31,7 +31,7 @@ def clear_session():
 
 @app.route("/users")
 def users():
-    user_list = model.session.query(model.User).limit(50).all()
+    user_list = model.s.query(model.User).limit(50).all()
     return render_template("user_list.html", users=user_list)
 
 @app.route("/register")
@@ -54,7 +54,15 @@ def register_user():
         flash("Success! Please log in to rate movies.")
         return redirect(url_for("index"))
 
+@app.route("/user/<user_id>")
+def user_page(user_id):
+    user = model.s.query(model.User).filter_by(id=user_id).first()
+    return render_template("user.html", user=user)
 
+@app.route("/movie/<movie_id>")
+def movie_page(movie_id):
+    movie = model.s.query(model.Movie).filter_by(id=movie_id).first()
+    return render_template("movie.html", movie=movie)
 
 if __name__ == "__main__":
     app.run(debug = True)

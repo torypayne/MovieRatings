@@ -1,0 +1,20 @@
+<html>
+    <head>
+        {% extends 'master.html' %}
+
+    {% block body %}
+    <h1>User {{user.id}}'s Page</h1>
+        <div>
+            {% for rating in user.ratings %}
+                <p>Movie: <a href="/movie/{{rating.movie.id}}">{{ rating.movie.name}}</a></p>
+                <p>Rating: {{ rating.rating}}</p>
+               <!--  Movie: {{key}} 
+                Rating: {{value}} -->
+            {% endfor %}
+
+
+        </div>
+
+    {% endblock %}
+
+</html>
