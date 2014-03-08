@@ -18,9 +18,13 @@ def process_login():
     if model.authenticate(email, password):
         flash("You're in!")
         session['email'] = email
+        user_email = session.get("email")
+        user = model.s.query(model.User).filter_by(email = user_email).first()
+        user = user.id
+        return redirect(url_for("user_page", user_id=user))
     else:
         flash("No movie ratings for you!")
-    return redirect(url_for("index"))
+        return redirect(url_for("index"))
 
 @app.route("/logout")
 def clear_session():
@@ -29,10 +33,17 @@ def clear_session():
     print "You logged out!!"
     return redirect(url_for("index"))
 
+
+
 @app.route("/users")
 def users():
+    user_email = session.get("email")
+    user = model.s.query(model.User).filter_by(email = user_email).first()
+    user = user.id
+    home = (url_for("user_page", user_id=user))
+    print home
     user_list = model.s.query(model.User).limit(50).all()
-    return render_template("user_list.html", users=user_list)
+    return render_template("user_list.html", users=user_list, home=home)
 
 @app.route("/register")
 def register():
@@ -56,13 +67,40 @@ def register_user():
 
 @app.route("/user/<user_id>")
 def user_page(user_id):
+    user_email = session.get("email")
+    home_user = model.s.query(model.User).filter_by(email = user_email).first()
+    home_user = home_user.id
+    home = (url_for("user_page", user_id=home_user))
     user = model.s.query(model.User).filter_by(id=user_id).first()
-    return render_template("user.html", user=user)
+    return render_template("user.html", user=user, home=home)
 
 @app.route("/movie/<movie_id>")
 def movie_page(movie_id):
+    user_email = session.get("email")
+    home_user = model.s.query(model.User).filter_by(email = user_email).first()
+    home_user = home_user.id
+    home = (url_for("user_page", user_id=home_user))
     movie = model.s.query(model.Movie).filter_by(id=movie_id).first()
-    return render_template("movie.html", movie=movie)
+    return render_template("movie.html", movie=movie, home=home)
+
+@app.route("/movie/<movie_id>", methods=["POST"])
+def rate_movie(movie_id):
+    user_email = session.get("email")
+    user = model.s.query(model.User).filter_by(email = user_email).first()
+    user = user.id
+    rating_value = request.form.get("rating")
+    rating_check = model.s.query(model.Rating).filter_by(movie_id=movie_id, user_id=user).first()
+    if rating_check != None:
+        rating_check.rating = rating_value
+        model.s.commit()
+        flash("Your rating has been updated!")
+        return redirect(url_for("movie_page", movie_id=movie_id))
+    else:
+        add_rating = model.Rating(movie_id=movie_id, user_id =user, rating = rating_value)
+        model.s.add(add_rating)
+        model.s.commit()
+        flash("You rating has been submitted!")
+        return redirect(url_for("movie_page", movie_id=movie_id))
 
 if __name__ == "__main__":
     app.run(debug = True)

@@ -3,8 +3,15 @@
         {% extends 'master.html' %}
 
     {% block body %}
+    <a href="/logout">Log out</a> | <a href="/">All Users</a> | <a href="{{home}}">Home</a>
     <h1>User {{user.id}}'s Page</h1>
+        <ul>
+            {% for message in get_flashed_messages() %}
+                <li>{{message}} </li>
+                    {% endfor %}
+        </ul>
         <div>
+
             {% for rating in user.ratings %}
                 <p>Movie: <a href="/movie/{{rating.movie.id}}">{{ rating.movie.name}}</a></p>
                 <p>Rating: {{ rating.rating}}</p>

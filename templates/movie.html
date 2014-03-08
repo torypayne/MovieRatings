@@ -3,12 +3,18 @@
         {% extends 'master.html' %}
 
     {% block body %}
+    <a href="/logout">Log out</a> | <a href="/">All Users</a> | <a href="{{home}}">Home</a>
     <h1>{{movie.name}}</h1>
 
         
         <div class="container">
             <form class="signin" method="post">
                 <h3>Seen it? Rate it</h3>
+                    <ul>
+                    {% for message in get_flashed_messages() %}
+                        <li>{{message}} </li>
+                    {% endfor %}
+                </ul>
                     <div id="form_ratings">
                         <label for="1">1</label>
                         <input type="radio" value="1" name="rating">
