@@ -3,9 +3,22 @@
         {% extends 'master.html' %}
 
     {% block body %}
-    <a href="/logout">Log out</a> | <a href="/">All Users</a> | <a href="{{home}}">Home</a>
-    <h1>{{movie.name}}</h1>
-
+    <a href="/logout">Log out</a> | <a href="/">All Users</a> | <a href="/movies">Movies</a> | <a href="{{home}}">Home</a>
+    <h1>{{movie.name}}<br><small>Average Rating: {{average|round(1,"common")}}</small></h1>
+    <div id="prediction">
+    {% if prediction %}
+    <h3>We predict you will rate this movie {{prediction|round(1,"common")}}.</h3>
+    {% endif %}
+    </div>
+    
+    <div id="the_eye">
+       <h3><small>The Eye says,"{{beratement}}"</small></h3>
+    </div>
+    <div id="prediction">
+    {% if user_rating %}
+    <h3>You have rated this movie {{user_rating.rating}}.</h3>
+    {% endif %}
+    </div>
         
         <div class="container">
             <form class="signin" method="post">

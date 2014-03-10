@@ -41,9 +41,17 @@ def users():
     user = model.s.query(model.User).filter_by(email = user_email).first()
     user = user.id
     home = (url_for("user_page", user_id=user))
-    print home
     user_list = model.s.query(model.User).limit(50).all()
     return render_template("user_list.html", users=user_list, home=home)
+
+@app.route("/movies")
+def movies():
+    user_email = session.get("email")
+    user = model.s.query(model.User).filter_by(email = user_email).first()
+    user = user.id
+    home = (url_for("user_page", user_id=user))
+    movie_list = model.s.query(model.Movie).limit(50).all()
+    return render_template("movie_list.html", movies=movie_list, home=home)
 
 @app.route("/register")
 def register():
@@ -80,8 +88,57 @@ def movie_page(movie_id):
     home_user = model.s.query(model.User).filter_by(email = user_email).first()
     home_user = home_user.id
     home = (url_for("user_page", user_id=home_user))
+    user = model.s.query(model.User).filter_by(email = user_email).first()
     movie = model.s.query(model.Movie).filter_by(id=movie_id).first()
-    return render_template("movie.html", movie=movie, home=home)
+    ratings = movie.ratings
+    rating_nums = []
+    user_rating = None
+    for r in ratings:
+        if r.user_id == user.id:
+            user_rating = r
+        rating_nums.append(r.rating)
+    avg_rating = float(sum(rating_nums))/len(rating_nums)
+
+    #prediction code - should only run if a movie hasn't been rated yet
+    
+    prediction = None
+    if not user_rating:
+        prediction = user.predict_rating(movie)
+        effective_rating = prediction
+    else:
+        effective_rating = user_rating.rating
+
+    the_eye = model.s.query(model.User).filter_by(email="theeye@ofjudgement.com").one()
+    eye_rating = model.s.query(model.Rating).filter_by(user_id=the_eye.id,
+            movie_id=movie.id).first()
+
+    if not eye_rating:
+        eye_rating = the_eye.predict_rating(movie)
+    else:
+        eye_rating = eye_rating.rating
+
+    difference = abs(eye_rating - effective_rating)
+
+    messages = [ "I suppose you don't have such bad taste after all.",
+             "I regret every decision that I've ever made that has brought me to listen to your opinion.",
+             "Words fail me, as your taste in movies has clearly failed you.",
+             "That movie is great. For a clown to watch. Idiot.",
+             "I am a golden god and all should fear me.  And your taste is terrible.",
+             "Your judgment is the peak of insanity.",
+             "I hate you.",
+             "I enjoy watching how wrong you are.",
+             "You're fired.",
+             "I'd rather be watching Toddlers & Tiaras than listen to your BS.",
+             "I love hedgehogs."]
+
+
+    beratement = messages[int(2*difference)]
+
+    return render_template("movie.html", movie=movie, home=home,
+                            average=avg_rating, user_rating=user_rating,
+                            prediction=prediction, beratement=beratement)
+
+
 
 @app.route("/movie/<movie_id>", methods=["POST"])
 def rate_movie(movie_id):

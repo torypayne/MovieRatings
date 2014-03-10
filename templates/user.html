@@ -3,7 +3,7 @@
         {% extends 'master.html' %}
 
     {% block body %}
-    <a href="/logout">Log out</a> | <a href="/">All Users</a> | <a href="{{home}}">Home</a>
+<a href="/logout">Log out</a> | <a href="/">All Users</a> | <a href="/movies">Movies</a> | <a href="{{home}}">Home</a>
     <h1>User {{user.id}}'s Page</h1>
         <ul>
             {% for message in get_flashed_messages() %}

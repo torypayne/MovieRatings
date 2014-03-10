@@ -7,10 +7,10 @@
     {% block body %}
 <a href="/logout">Log out</a> | <a href="/">All Users</a> | <a href="/movies">Movies</a> | <a href="{{home}}">Home</a>
 
-<h1>User list</h1>
+<h1>Movie list</h1>
 
-{% for user in users %}
-<h3><a href="/user/{{user.id}}">User {{user.id}}</a>, age {{user.age}}, has {{ user.ratings|length}} ratings</h3>
+{% for movie in movies %}
+<h3><a href="/movie/{{movie.id}}">{{movie.name}}</a> has {{movie.ratings|length}} ratings</h3>
 {% endfor %}
 {% endblock %}
 </body>
